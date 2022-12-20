@@ -10,21 +10,11 @@ class Solution:
                 if j > i + 1 and nums[j] == nums[j - 1]:
                     continue
                 goal = target - nums[i] - nums[j]
-                left = j + 1
-                right = n - 1
-                while left < right:
-                    while left < right and left > j + 1 and nums[left - 1] == nums[left]:
-                        left += 1
-                    while left < right and right < n - 1 and nums[right + 1] == nums[right]:
-                        right -= 1
-                    if left == right:
-                        break
-                    if nums[left] + nums[right] > goal:
-                        right -= 1
-                    elif nums[left] + nums[right] == goal:
-                        ans.append([nums[i], nums[j], nums[left], nums[right]])
-                        left += 1
-                        right -= 1
-                    else:
-                        left += 1
+                seen = set()
+                added = set()
+                for k in range(j + 1, n):
+                    if goal - nums[k] in seen and nums[k] not in added:
+                        ans.append([nums[i], nums[j], nums[k], goal - nums[k]])
+                        added.add(nums[k])
+                    seen.add(nums[k])
         return ans
