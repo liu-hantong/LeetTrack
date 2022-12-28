@@ -1,31 +1,30 @@
 class Solution:
     def findSubstring(self, s: str, words: List[str]) -> List[int]:
+        ans = []
         n = len(s)
-        k = len(words)
-        word_length = len(words[0])
-        substring_size = word_length * k
-        word_count = collections.Counter(words)
-        
-        def check(i):
-            # Copy the original dictionary to use for this index
-            remaining = word_count.copy()
-            words_used = 0
-            
-            # Each iteration will check for a match in words
-            for j in range(i, i + substring_size, word_length):
-                sub = s[j : j + word_length]
-                if remaining[sub] > 0:
-                    remaining[sub] -= 1
-                    words_used += 1
+        k = len(words[0])
+        c = Counter(words)
+        t = len(words)
+        def slide_window(i):
+            left = i
+            cp = c.copy()
+            for right in range(i + k, n + 1, k):
+                nw = s[right-k:right]
+                if nw in c:
+                    print(nw)
+                    cp[nw] -= 1
                 else:
-                    break
-            
-            # Valid if we used all the words
-            return words_used == k
-        
-        answer = []
-        for i in range(n - substring_size + 1):
-            if check(i):
-                answer.append(i)
-
-        return answer
+                    left = right
+                    cp = c.copy()
+                while cp[nw] < 0:
+                    cp[s[left:left+k]] += 1
+                    left += k
+                if right - left == k * t:
+                    ans.append(left)
+                    cp[s[left:left+k]] += 1
+                    left += k
+                    
+        for i in range(k):
+            slide_window(i)
+      
+        return ans
